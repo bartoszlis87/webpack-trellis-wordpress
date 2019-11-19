@@ -1,0 +1,19 @@
+{
+  "entry": {
+    "main": [
+      "scripts/main.js",
+      "styles/main.scss"
+    ]
+  },
+  "publicPath": "/app/themes/example_com/dist/",
+  "proxyUrl": "http://example.com",
+  "localServerHost": "localhost",
+  "localServerPort": 3000,
+  "cacheBusting": "[name]_[hash:8]",
+  "copy": "images/**/*",
+  "favicon": "icons/icon.jpg",
+  "watch": [
+    "templates/**/*.twig",
+    "*.php"
+  ]
+}
