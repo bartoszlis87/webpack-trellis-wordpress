@@ -33,13 +33,21 @@ module.exports = {
     new ImageMinWebpWebpackPlugin({
       config: [
         {
-          test: /images\/\.(jpe?g|png)/,
+          test: /(images).*\.(jpe?g|png)/,
           options: {
             quality: 75
           }
         }
       ],
       overrideExtension: false
+    }),
+    new ImageminPlugin({
+      plugins: [
+        ImageminMozjpeg({
+          quality: 75,
+          progressive: true
+        })
+      ]
     })
   ],
   optimization: {
