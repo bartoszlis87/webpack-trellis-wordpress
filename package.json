@@ -51,6 +51,7 @@
     "webpack-dev-server": "^3.9.0",
     "webpack-hot-middleware": "^2.25.0",
     "webpack-merge": "^4.2.2",
+    "webpack-spritesmith": "^1.0.2",
     "yargs": "^14.2.0"
   },
   "dependencies": {

@@ -7,6 +7,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const WebpackAssetsManifest = require("webpack-assets-manifest");
 const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
 const StylelintPlugin = require("stylelint-webpack-plugin");
+const SpriteSmithPlugin = require("webpack-spritesmith");
 
 const config = require("./project.config");
 const assetsFilenames = config.isProduction ? config.cacheBusting : "[name]";
@@ -87,11 +88,32 @@ let webpackConfig = {
     new CleanWebpackPlugin({
       verbose: false
     }),
+    new SpriteSmithPlugin({
+      src: {
+        cwd: `${config.assetsPath}/sprites/images`,
+        glob: "**/*"
+      },
+      target: {
+        image: `${config.assetsPath}/sprites/sprite.png`,
+        css: `${config.assetsPath}/sprites/sprite.scss`
+      },
+      apiOptions: {
+        cssImageRef: "../sprites/sprite.png"
+      },
+      retina: "@2x"
+    }),
     new CopyWebpackPlugin(
       [
         {
           context: config.assetsPath,
           from: config.copy,
+          to: config.distPath + `/[path]${assetsFilenames}.[ext]`,
+          toType: "template",
+          cache: true
+        },
+        {
+          context: config.assetsPath,
+          from: "sprites/*.png",
           to: config.distPath + `/[path]${assetsFilenames}.[ext]`,
           toType: "template",
           cache: true
