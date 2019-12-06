@@ -7,6 +7,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const WebpackAssetsManifest = require("webpack-assets-manifest");
 const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
 const StylelintPlugin = require("stylelint-webpack-plugin");
+const SpriteSmithPlugin = require("webpack-spritesmith");
 
 const config = require("./project.config");
 const assetsFilenames = config.isProduction ? config.cacheBusting : "[name]";
@@ -18,7 +19,7 @@ let webpackConfig = {
     path: config.distPath,
     publicPath: config.publicPath,
     filename: `scripts/${assetsFilenames}.js`,
-    chunkFilename: `scripts/${assetsFilenames}.bundle.js`
+    chunkFilename: `scripts/${assetsFilenames}.vendor.js`
   },
   module: {
     rules: [
@@ -87,11 +88,32 @@ let webpackConfig = {
     new CleanWebpackPlugin({
       verbose: false
     }),
+    new SpriteSmithPlugin({
+      src: {
+        cwd: `${config.assetsPath}/sprites/images`,
+        glob: "**/*"
+      },
+      target: {
+        image: `${config.assetsPath}/sprites/sprite.png`,
+        css: `${config.assetsPath}/sprites/sprite.scss`
+      },
+      apiOptions: {
+        cssImageRef: "../sprites/sprite.png"
+      },
+      retina: "@2x"
+    }),
     new CopyWebpackPlugin(
       [
         {
           context: config.assetsPath,
           from: config.copy,
+          to: config.distPath + `/[path]${assetsFilenames}.[ext]`,
+          toType: "template",
+          cache: true
+        },
+        {
+          context: config.assetsPath,
+          from: "sprites/*.png",
           to: config.distPath + `/[path]${assetsFilenames}.[ext]`,
           toType: "template",
           cache: true
@@ -112,7 +134,25 @@ let webpackConfig = {
     }),
     new FriendlyErrorsWebpackPlugin(),
     new StylelintPlugin()
-  ]
+  ],
+  optimization: {
+    splitChunks: {
+      chunks: "all",
+      maxInitialRequests: Infinity,
+      minSize: 0,
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name(module) {
+            const packageName = module.context.match(
+              /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+            )[1];
+            return `vendors/${packageName.replace("@", "")}`;
+          }
+        }
+      }
+    }
+  }
 };
 
 webpackConfig = merge(webpackConfig, require(`./webpack.${config.env}`));
