@@ -19,7 +19,7 @@ let webpackConfig = {
     path: config.distPath,
     publicPath: config.publicPath,
     filename: `scripts/${assetsFilenames}.js`,
-    chunkFilename: `scripts/${assetsFilenames}.bundle.js`
+    chunkFilename: `scripts/${assetsFilenames}.vendor.js`
   },
   module: {
     rules: [
@@ -134,7 +134,25 @@ let webpackConfig = {
     }),
     new FriendlyErrorsWebpackPlugin(),
     new StylelintPlugin()
-  ]
+  ],
+  optimization: {
+    splitChunks: {
+      chunks: "all",
+      maxInitialRequests: Infinity,
+      minSize: 0,
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name(module) {
+            const packageName = module.context.match(
+              /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+            )[1];
+            return `vendors/${packageName.replace("@", "")}`;
+          }
+        }
+      }
+    }
+  }
 };
 
 webpackConfig = merge(webpackConfig, require(`./webpack.${config.env}`));

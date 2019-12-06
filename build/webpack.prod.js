@@ -4,26 +4,15 @@ const TerserWebpackPlugin = require("terser-webpack-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const ImageMinWebpWebpackPlugin = require("imagemin-webp-webpack-plugin");
 const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
+const ImageminPlugin = require("imagemin-webpack-plugin").default;
+const ImageminMozjpeg = require("imagemin-mozjpeg");
 
 const config = require("./project.config");
 
 module.exports = {
   mode: "production",
   devtool: "source-map",
-  stats: {
-    hash: false,
-    version: false,
-    timings: true,
-    children: false,
-    errors: true,
-    errorDetails: true,
-    warnings: true,
-    chunks: false,
-    modules: false,
-    reasons: false,
-    source: false,
-    publicPath: false
-  },
+  stats: true,
   plugins: [
     new FaviconsWebpackPlugin({
       logo: `${config.favicon}`,
@@ -65,10 +54,6 @@ module.exports = {
           preset: ["default", { discardComments: { removeAll: true } }]
         }
       })
-    ],
-    splitChunks: {
-      chunks: "all",
-      automaticNameDelimiter: "~"
-    }
+    ]
   }
 };
