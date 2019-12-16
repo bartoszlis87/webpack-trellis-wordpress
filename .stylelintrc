@@ -1,0 +1,6 @@
+{
+  "extends": ["stylelint-prettier/recommended"],
+  "ignoreFiles": [
+    "assets/sprites/**/*.scss"
+  ]
+}
